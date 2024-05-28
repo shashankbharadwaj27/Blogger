@@ -13,7 +13,7 @@ const Blog=require('./models/blog');
 const populateUser=require('./middlewares/populateUser');
 
 const app=express();
-const PORT=process.env.PORT;
+const PORT=process.env.PORT || 8000;
 
 mongoose.connect(process.env.MONGO_URL)
 .then(console.log('MongoDB Connected'));
