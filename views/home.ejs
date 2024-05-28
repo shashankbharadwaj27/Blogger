@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./partials/head') %>
+    <link rel="stylesheet" href="/styles/style.css">
+    <title>Blogger</title>
+</head>
+<body data-bs-theme="dark">
+    <%- include('./partials/nav') %>
+    <div class="container mt-3 text-center" data-bs-theme="dark">
+        <div class="tabs">
+            <button id="for-you-tab" class="btn btn-secondary active" onclick="toggleContent('for-you')">For You</button>
+            <button id="following-tab" class="btn btn-secondary" onclick="toggleContent('following')">Following</button>
+        </div>
+
+        <div id="for-you-content">
+        <div id="static-content">
+            <div class="hero-section">
+                <div class="hero-content">
+                    <h1>Welcome to Blogger</h1>
+                    <p>Start sharing your stories today!</p>
+                    <a href="/blog/add-blog" class="btn btn-primary">Write a Blog</a>
+                </div>
+            </div>
+            <div class="row row-cols-3">
+                <div class="col">
+                    <div class="card mt-2 col">
+                        <img src="/images/create-blog.jpg" class="card-img-top" alt="Create Your Blog">
+                        <div class="card-body">
+                            <h5 class="card-title">Create Your Blog</h5>
+                            <p class="card-text">It's easy to create your own blog. Just click the "Write a Blog" button and start writing!</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card mt-2 col">
+                        <img src="/images/connect-people.jpg" class="card-img-top" alt="Connect with People">
+                        <div class="card-body">
+                            <h5 class="card-title">Connect with People</h5>
+                            <p class="card-text">Follow other bloggers to see their posts and interact with a community of like-minded people.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card mt-2 col">
+                        <img src="/images/discover-blogs.jpg" class="card-img-top" alt="Discover Blogs">
+                        <div class="card-body">
+                            <h5 class="card-title">Discover Blogs</h5>
+                            <p class="card-text">Browse through a variety of blogs from different genres and discover new content every day.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3 mb-3">
+                <div class="col">
+                    <div class="card mt-2 col second-row-c1">
+                        <img src="/images/share-thoughts.jpg" class="card-img-top" alt="Share Your Thoughts">
+                        <div class="card-body">
+                            <h5 class="card-title">Share Your Thoughts</h5>
+                            <p class="card-text">Express yourself and share your ideas with the world through your own personal blog.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card mt-2 col">
+                        <img src="/images/get-started.jpg" class="card-img-top" alt="Get Started">
+                        <div class="card-body">
+                            <h5 class="card-title">Get Started</h5>
+                            <p class="card-text">Join our community today and start your blogging journey!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <div id="following-content" style="display: none;">
+                <% if (locals.blogs && locals.blogs.length > 0) { %>
+                    <div class="container mt-3 text-center" data-bs-theme="dark">
+                        <div class="row row-cols-3">
+                            <% blogs.forEach(blog => { %>
+                                <div class="col">
+                                    <div class="card mt-2 col">
+                                        <img 
+                                        <% if (blog.coverImage==='') { %>
+                                            src='/images/default-cover-image.png'
+                                        <% } else { %>
+                                            src='<%= blog.coverImage %>'
+                                        <% } %> class="card-img-top" alt="...">
+                                        <div class="card-body">
+                                            <h5 class="card-title"><%= blog.title %></h5>
+                                            <p class="card-text"><%= blog.preview %></p>
+                                            <a href='/blog/<%=blog._id  %>' class="btn btn-primary">View</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    </div>
+                <% } else { %>
+                    <p class="mt-3">Follow people to view blogs</p>
+                <% } %>
+        </div>
+    
+    <%- include('./partials/scripts') %>
+    <script>
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        function toggleContent(tab) {
+            document.getElementById('for-you-content').style.display = tab === 'for-you' ? 'block' : 'none';
+            document.getElementById('following-content').style.display = tab === 'following' ? 'block' : 'none';
+
+            document.getElementById('for-you-tab').classList.toggle('active', tab === 'for-you');
+            document.getElementById('following-tab').classList.toggle('active', tab === 'following');
+        }
+    </script>
+</body>
+</html>

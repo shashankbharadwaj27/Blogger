@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./partials/head') %>
+    <link rel="stylesheet" href="/styles/settings.css">
+    <title>Blogger</title>
+</head>
+<body data-bs-theme="dark">
+    <%- include('./partials/nav') %>
+    <div class="container rounded mt-0 mb-3">
+        <div class="row">
+            <div class="col-md-3 border-right">
+                <div class="d-flex flex-column align-items-center text-center p-3 py-5"><img class=" mt-5" width="200px" src="<%= currentUser.profileImage %>"><span class="font-weight-bold mt-2 text-white"><%= currentUser.firstName %></span><span class="text-white"><%= currentUser.email %></span><span> </span></div>
+            </div>
+            <div class="col-md-5 border-right">
+                <div class="p-3 py-5">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="text-right">Profile Settings</h4>
+                    </div>
+                    <form action="/user/settings" method="post" enctype="multipart/form-data" >
+                        <div class="row mt-2">
+                            <div class="col-md-12">
+                                <label class="labels">Profile Photo</label>
+                                <input type="file" name="profileImage" id="profilePhoto" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-6"><label class="labels">Name</label><input type="text" class="form-control" name="firstName" placeholder="First Name" value="<%= currentUser.firstName %>"></div>
+                            <div class="col-md-6"><label class="labels">Surname</label><input type="text" class="form-control" name="surname" value="" placeholder="Surname"></div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-12"><label class="labels">Mobile Number</label><input type="text" class="form-control" name="mobile" placeholder="Enter phone number" value=""></div>
+                            <div class="col-md-12"><label class="labels">About</label><input type="text" name="description" class="form-control" placeholder="Leave something about you.." value="<% if (locals.currentUser.description) { %>
+                             <%= locals.currentUser.description %>
+                            <% } %>"></div>
+                            <div class="col-md-12"><label class="labels">Email ID</label><input type="text" class="form-control" name="email" placeholder="enter email id" value="<%= locals.currentUser.email %>"></div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-6"><label class="labels">Country</label><input type="text" name="country" class="form-control" placeholder="country" value=""></div>
+                            <div class="col-md-6"><label class="labels">State/Region</label><input type="text" name="state" class="form-control" value="" placeholder="state"></div>
+                        </div>
+                        <div class="mt-4 text-center"><button class="btn btn-primary profile-button" type="submit">Save Profile</button></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+    <%- include('./partials/scripts') %>
+</body>
+</html>

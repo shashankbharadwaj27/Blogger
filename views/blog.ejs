@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./partials/head') %>
+    <link rel="stylesheet" href="/styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Blogger</title>
+</head>
+<body data-bs-theme="dark">
+    <%- include('./partials/nav') %>
+    <div class="container mt-4">
+        <h1 class="mt-"><%= blog.title %></h1>
+        <img class="blog-image mt-2" src="<%= blog.coverImage %>">
+        <p class="mt-2"><%= blog.body %></p>
+    </div>
+    <div class="container mt-2">
+        <a href="/user/<%= blog.createdBy.username %>"><img src="<%= blog.createdBy.profileImage %>" class="small-profiles" width="50px"><%= blog.createdBy.firstName %></a>
+    </div>
+    <div class="container mt-3">
+        <div class="like-section">
+            <button id="like-button" class="btn" onclick="toggleLike('<%= blog._id %>')" style="border:transparent">
+                <% if (blog.likes.includes(currentUser._id)) { %>
+                    <i style="color:red" class="fa-solid fa-heart"></i>
+                <% } else { %>
+                    <i class="fa-regular fa-heart"></i>
+                <% } %>
+            </button>
+            <span id="like-count"><%= blog.likes.length %></span> likes
+        </div>
+    </div>
+    <div class="container mt-3 mb-3">
+        <h3>comments</h3>
+        <% if (locals.currentUser) { %>
+         <div class="form-floating">
+            <form action="/blog/comment/<%= blog._id %>" method="post">
+                <textarea class="form-control mt-3" placeholder="Leave a comment here" id="content" name="content"></textarea>
+                <button class="btn btn-primary mt-2">Submit</button>
+            </form> 
+        </div>
+        <% } else { %>
+            <div class="form-floating">
+                <form action="/blog/comment/<%= blog._id %>" method="post">
+                    <textarea class="form-control mt-3" placeholder="Sign-in to comment under this post" id="content" name="content" disabled></textarea>
+                    <button class="btn btn-primary mt-2" disabled>Submit</button>
+                </form> 
+        <% } %>
+         
+        
+        <div class="comments mt-4">
+            <% comments.forEach(comment => { %>
+                <div class="mt-2">
+                    <a href="/user/<%= comment.createdBy.username %>"><img src="<%= comment.createdBy.profileImage %>" class="small-profiles" width="50px"><%=comment.createdBy.firstName %></a>
+                    <div class="comment-content"><pre style="margin-left: 50px;"><%= comment.content %></pre></div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+    <%- include('./partials/scripts') %>
+    <script src="/scripts/script.js"></script>
+</body>
+</html>

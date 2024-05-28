@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./partials/head') %>
+    <title>Blogger</title>
+</head>
+<body data-bs-theme="dark">
+    <%- include('./partials/nav') %>
+    <div class="container mb-3">
+        <form action="/user/signin" method="post">
+            <div class="mb-3">
+              <label for="username" class="form-label">Username</label>
+              <input type="text" name="username" class="form-control" id="email" aria-describedby="emailHelp">
+            </div>
+
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" name="password" class="form-control" id="password">
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="showPassword">
+              <label class="form-check-label" for="showPassword">Check me out</label>
+            </div>
+            <% if (locals.message) { %>
+                <p style="color:red"><%= message %></p>
+            <% } %>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <%- include('./partials/scripts') %>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          const showPasswordCheckbox = document.getElementById('showPassword');
+          const passwordField = document.getElementById('password');
+  
+          showPasswordCheckbox.addEventListener('change', function() {
+              if (showPasswordCheckbox.checked) {
+                  passwordField.type = 'text';
+              } else {
+                  passwordField.type = 'password';
+              }
+          });
+      });
+  </script>
+</body>
+</html>

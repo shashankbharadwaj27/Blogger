@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./partials/head') %>
+    <link rel="stylesheet" href="/styles/style.css">
+    <title>Blogger</title>
+</head>
+<body data-bs-theme="dark">
+    <%- include('./partials/nav') %>
+    <div class="container mt-4">
+
+        <% if (locals.users) { %>
+            <h1 id="search-heading">Search Results</h1>
+            <ul>
+                <% locals.users.forEach(user => { %>
+                    <a href="/user/<%= user.username %>">
+                        <div class="search-result">
+                            <li><img class="profile" src="<%= user.profileImage %>" alt=""><h4><%= user.firstName %> <%= user.surname %></h4></li>
+                        </div>
+                    </a>
+                <% }) %>
+            </ul>
+        <% } %>
+        <% if (locals.blogs) { %>
+            <ul>
+                <% locals.blogs.forEach(blog => { %>
+                    <a class="search-result" href="/blog/<%= blog._id %>">
+                        <div class="search-result">
+                            <li><img class="profile" src="<%= blog.coverImage %>" alt=""><h4><%=blog.title %></h4></li>
+                        </div>
+                    </a>
+                <% }) %>
+            </ul>
+        <% } %>
+    </div>
+    <%- include('./partials/scripts') %>
+</body>
+</html>

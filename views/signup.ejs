@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./partials/head') %>
+    <title>Blogger</title>
+</head>
+<body data-bs-theme="dark">
+    <%- include('./partials/nav') %>
+    <div class="container">
+        <form action="/user/signup" method="post">
+            <div class="mb-3">
+                <label for="firstName" class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="firstName" name="firstName">
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Email address</label>
+              <input type="email" name="email" class="form-control" id="email" aria-describedby="emailHelp">
+              <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+            </div>
+
+            <div class="mb-3">
+              <label for="username" class="form-label">username</label>
+              <input type="text" name="username" class="form-control" id="username">
+            </div>
+
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" name="password" class="form-control" id="password">
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="exampleCheck1">
+              <label class="form-check-label" for="exampleCheck1">Check me out</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+    </div>
+    <%- include('./partials/scripts') %>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          const showPasswordCheckbox = document.getElementById('showPassword');
+          const passwordField = document.getElementById('password');
+  
+          showPasswordCheckbox.addEventListener('change', function() {
+              if (showPasswordCheckbox.checked) {
+                  passwordField.type = 'text';
+              } else {
+                  passwordField.type = 'password';
+              }
+          });
+      });
+  </script>
+</body>
+</html>
