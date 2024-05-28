@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const { Router } = require('express');
 const User = require('../models/user');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const path = require('path');
 const multer = require('multer');
 const { createUserToken } = require('../services/authentication');
