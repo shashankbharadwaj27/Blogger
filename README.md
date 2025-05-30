@@ -43,17 +43,30 @@ A full-featured blogging platform built with Node.js, Express, MongoDB, and EJS,
 ---
 
 ## 🗂️ Project Structure
-├── app.js # Main application entry point
-├── controllers/ # Business logic (blog, user, etc.)
-├── middlewares/ # Custom middlewares (authentication, etc.)
-├── models/ # MongoDB schemas with Mongoose
-├── routes/ # Express route definitions
-├── services/ # Utility functions
-├── views/ # EJS templates for UI
-├── public/ # Static assets (CSS, JS, images)
-├── screenshots/ # Screenshots for documentation
-├── .env # Environment variables
-└── package.json # Project metadata and dependencies
+```plaintext
+Blogger/
+├── app.js
+│   └── Main application entry point
+├── controllers/
+│   └── Business logic (blog, user, etc.)
+├── middlewares/
+│   └── Custom middlewares (authentication, etc.)
+├── models/
+│   └── MongoDB schemas with Mongoose
+├── routes/
+│   └── Express route definitions
+├── services/
+│   └── Utility functions
+├── views/
+│   └── EJS templates for UI
+├── public/
+│   └── Static assets (CSS, JS, images)
+├── screenshots/
+│   └── Screenshots for documentation
+├── .env
+│   └── Environment variables
+└── package.json
+    └── Project metadata and dependencies
 
 ---
 
