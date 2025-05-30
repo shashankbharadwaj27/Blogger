@@ -16,7 +16,7 @@ const app=express();
 const PORT=process.env.PORT || 8000;
 
 mongoose.connect(process.env.MONGO_URL)
-.then(console.log('MongoDB Connected')).catch(err=>console.log(error))
+.then(console.log('MongoDB Connected')).catch(err=>console.log(err))
 
 app.set('view engine','ejs');
 app.set('views',path.resolve('./views')); 
