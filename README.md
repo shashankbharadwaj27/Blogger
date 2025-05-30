@@ -43,7 +43,6 @@ A full-featured blogging platform built with Node.js, Express, MongoDB, and EJS,
 ---
 
 ## 🗂️ Project Structure
-
 ├── app.js # Main application entry point
 ├── controllers/ # Business logic (blog, user, etc.)
 ├── middlewares/ # Custom middlewares (authentication, etc.)
