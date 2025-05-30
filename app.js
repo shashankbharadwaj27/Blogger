@@ -15,7 +15,7 @@ const populateUser=require('./middlewares/populateUser');
 const app=express();
 const PORT=process.env.PORT || 8000;
 
-mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGO_URL)
 .then(console.log('MongoDB Connected')).catch(err=>console.log(error))
 
 app.set('view engine','ejs');
@@ -55,4 +55,4 @@ app.get('/',async(req,res)=>{
     }
 })
 
-app.listen(PORT,()=>console.log(`server started at port: ${PORT}`));
+app.listen(PORT,()=>console.log(`server started at: http://localhost:${PORT}`));
