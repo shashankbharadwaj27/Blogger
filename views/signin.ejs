@@ -6,7 +6,7 @@
 </head>
 <body data-bs-theme="dark">
     <%- include('./partials/nav') %>
-    <div class="container mb-3">
+    <div class="container mb-3" style="min-height: 80vh;">
         <form action="/user/signin" method="post">
             <div class="mb-3">
               <label for="username" class="form-label">Username</label>
@@ -27,6 +27,7 @@
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
+    <%- include('./partials/footer') %>
     <%- include('./partials/scripts') %>
     <script>
       document.addEventListener('DOMContentLoaded', function() {

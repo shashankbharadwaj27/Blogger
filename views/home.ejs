@@ -7,7 +7,7 @@
 </head>
 <body data-bs-theme="dark">
     <%- include('./partials/nav') %>
-    <div class="container mt-3 text-center" data-bs-theme="dark">
+    <div class="container mt-3 text-center" style="min-height: 80vh;" data-bs-theme="dark">
         <div class="tabs">
             <button id="for-you-tab" class="btn btn-secondary active" onclick="toggleContent('for-you')">For You</button>
             <button id="following-tab" class="btn btn-secondary" onclick="toggleContent('following')">Following</button>
@@ -74,7 +74,7 @@
         </div>
     </div>
 
-        <div id="following-content" style="display: none;">
+        <div id="following-content" style="display: none;min-height: 80vh;">
                 <% if (locals.blogs && locals.blogs.length > 0) { %>
                     <div class="container mt-3 text-center" data-bs-theme="dark">
                         <div class="row row-cols-3">
@@ -101,7 +101,7 @@
                     <p class="mt-3">Follow people to view blogs</p>
                 <% } %>
         </div>
-    
+    <%- include('./partials/footer') %>
     <%- include('./partials/scripts') %>
     <script>
         function formatDate(dateString) {

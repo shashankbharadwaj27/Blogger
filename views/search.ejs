@@ -7,7 +7,7 @@
 </head>
 <body data-bs-theme="dark">
     <%- include('./partials/nav') %>
-    <div class="container mt-4">
+    <div class="container mt-4" style="min-height: 80vh;">
 
         <% if (locals.users) { %>
             <h1 id="search-heading">Search Results</h1>
@@ -33,6 +33,7 @@
             </ul>
         <% } %>
     </div>
+    <%- include('./partials/footer') %>
     <%- include('./partials/scripts') %>
 </body>
 </html>

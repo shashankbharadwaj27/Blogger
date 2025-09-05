@@ -4,7 +4,7 @@ const Comments = require('../models/comments');
 const multer = require('multer');
 const path = require('path');
 const { restrictToLoggedinUserOnly } = require('../middlewares/authentication');
-const { handleGetAddBlog, handleGetBlog, handlePostComment, handlePostNewBlog, handlePostLikeBlog }=require('../controllers/blog')
+const { handleGetAddBlog, handleGetBlog, handlePostComment, handlePostNewBlog, handleLikeBlog, handleDeleteBlog }=require('../controllers/blog')
 
 const router = new Router();
 
@@ -22,7 +22,9 @@ const upload = multer({ storage: storage });
 
 router.get('/add-blog', restrictToLoggedinUserOnly, handleGetAddBlog);
 
-router.post('/:id/like',restrictToLoggedinUserOnly,handlePostLikeBlog);
+router.post('/:id/like',restrictToLoggedinUserOnly,handleLikeBlog);
+
+router.post('/delete/:id',restrictToLoggedinUserOnly,handleDeleteBlog);
 
 router.post('/', restrictToLoggedinUserOnly, upload.single('coverImage'),handlePostNewBlog);
 

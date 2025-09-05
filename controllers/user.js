@@ -12,95 +12,106 @@ const Blog = require('../models/blog');
 const router = Router();
 
 
-function handleGetUserSignin(req,res){
-    try{
+function handleGetUserSignin(req, res) {
+    try {
         res.render('signin');
-    }
-    catch(error) {
-        res.send('Error loading this page')
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error loading this page');
     }
 }
 
-async function handlePostUserSignin(req,res){
+async function handlePostUserSignin(req, res) {
     try {
         const { username, password } = req.body;
         const user = await User.findOne({ username });
         if (!user) {
-            return res.render('signin', { error: 'User not found' });
+            return res.status(404).render('signin', { error: 'User not found' });
         }
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.render('signin', { error: 'Incorrect password' });
+            return res.status(400).render('signin', { error: 'Incorrect password' });
         }
         const token = createUserToken(user);
         res.cookie('token', token).redirect('/');
-    } catch(error) {
+    } catch (error) {
         console.error(error);
-        res.render('signin', { error: 'An error occurred' });
+        res.status(500).render('signin', { error: 'An error occurred' });
     }
 }
 
-function handleGetUserSignup(req,res){
-    try{
+function handleGetUserSignup(req, res) {
+    try {
         res.render('signup');
-    }
-    catch(error){
-        res.send('Error loading this page');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error loading this page');
     }
 }
 
-async function handlePostUserSignup(req,res){
-    try{
+async function handlePostUserSignup(req, res) {
+    try {
         const { firstName, email, password, username } = req.body;
-        key=process.env.apiKey;
-        const url=`https://api.emailvalidation.io/v1/info?apikey=${key}&email=${email}`
-        let response = await fetch(url)
-        let result= await response.json();
+        key = process.env.apiKey;
+        const url = `https://api.emailvalidation.io/v1/info?apikey=${key}&email=${email}`;
+        let response = await fetch(url);
+        let result = await response.json();
         if (result.smtp_check === false) {
-            // Email did not pass verification
-            return res.render('signup', { message: 'Invalid email address. Please use a valid email'});
+            return res.status(400).render('signup', { message: 'Invalid email address. Please use a valid email' });
         }
         await User.create({ firstName, email, password, username });
         return res.redirect('/user/signin');
-    }
-    catch(error){
+    } catch (error) {
+        console.error(error);
         if (error.code === 11000 && error.keyPattern.username) {
-            return res.render('signup', { error: 'Username is already taken' });
+            return res.status(400).render('signup', { error: 'Username is already taken' });
         }
         if (error.code === 11000 && error.keyPattern.email) {
-            return res.render('signup', { error: 'Entered Email is already in use' });
+            return res.status(400).render('signup', { error: 'Entered Email is already in use' });
         }
-    }  
+        res.status(500).render('signup', { error: 'An error occurred while signing up' });
+    }
 }
 
-function handleUserLogout(req,res){
-    try{
+function handleUserLogout(req, res) {
+    try {
         res.cookie('token', '', { maxAge: 1 });
         res.redirect('/user/signin');
-    }
-    catch(error){
-        res.render('/',{error:'An error occured while logging out'});
-    }
-}
-
-function handleGetUserSettings(req,res){
-    try{
-        res.render('settings', {
-            currentUser: req.user
-        });
-    }
-    catch(error){
-        res.send('Error loading this page');
+    } catch (error) {
+        console.error(error);
+        res.status(500).render('home', { error: 'An error occurred while logging out' });
     }
 }
 
-async function handlePostUserSettings(req,res){
+async function handleGetUserSettings(req, res) {
     try {
-        const { username, firstName, surname, mobile, description, email, country, state } = req.body;
+        const user = await User.findOne({ username: req.user.username });
+        if (!user) {
+            return res.status(404).render('error', { status: 404, message: 'User not found', currentUser: req.user });
+        }
+        res.render('settings', {
+            currentUser: user
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error loading this page');
+    }
+}
+
+async function handlePostUserSettings(req, res) {
+    try {
+        const { username, firstName, surname, mobile, description, email, country, state, deleteProfileImage } = req.body;
         const currentUser = await User.findById(req.user._id);
+
+        if (!currentUser) {
+            return res.status(404).render('error', { status: 404, message: 'User not found', currentUser: req.user });
+        }
 
         if (req.file) {
             currentUser.profileImage = `/uploads/${req.file.filename}`;
+        }
+        if (deleteProfileImage) {
+            currentUser.profileImage = '/images/avatar.png';
         }
         if (username && username !== currentUser.username) {
             currentUser.username = username;
@@ -126,25 +137,30 @@ async function handlePostUserSettings(req,res){
         if (state && state !== currentUser.state) {
             currentUser.state = state;
         }
-
         await currentUser.save();
+        req.user = currentUser;
         res.redirect(`/user/${currentUser.username}`);
     } catch (error) {
         console.error(error);
-        res.render('settings', { error: 'An error occurred', currentUser: req.user });
+        res.status(500).render('settings', { error: 'An error occurred', currentUser: req.user });
     }
 }
 
-async function handleGetUserProfile(req,res){
+async function handleGetUserProfile(req, res) {
     try {
         const { username } = req.params;
         const user = await User.findOne({ username });
 
         if (!user) {
-            return res.render('profile', { error: 'User not found', currentUser: req.user });
+            return res.status(404).render('error', { status: 404, message: 'User not found', currentUser: req.user });
         }
 
         const allBlogs = await Blog.find({ createdBy: user._id });
+
+        if (!allBlogs || allBlogs.length === 0) {
+            return res.render('profile', { user, allBlogs: [], message: 'No blogs yet', currentUser: req.user });
+        }
+
         res.render('profile', {
             user,
             allBlogs,
@@ -152,33 +168,47 @@ async function handleGetUserProfile(req,res){
         });
     } catch (error) {
         console.error(error);
-        res.render('profile', { error: 'An error occurred', currentUser: req.user });
+        res.status(500).render('error', { status: 500, message: 'An error occurred', currentUser: req.user });
     }
 }
 
-async function handlePostFollowRequest(req,res){
-    try{
-        const userToFollow=await User.findOne({username:req.params.username});
-        const currentUser=await User.findById(req.user._id);
-    
-        if(!userToFollow.followers.includes(currentUser._id)){
+async function handlePostFollowRequest(req, res) {
+    try {
+        const userToFollow = await User.findOne({ username: req.params.username });
+        if (!userToFollow) {
+            return res.status(404).render('error', { status: 404, message: 'User not found', currentUser: req.user });
+        }
+
+        const currentUser = await User.findById(req.user._id);
+        if (!currentUser) {
+            return res.status(404).render('error', { status: 404, message: 'Current user not found', currentUser: req.user });
+        }
+
+        if (!userToFollow.followers.includes(currentUser._id)) {
             currentUser.following.push(userToFollow._id);
             userToFollow.followers.push(currentUser._id);
-    
+
             await userToFollow.save();
             await currentUser.save();
         }
         res.redirect(`/user/${userToFollow.username}`);
-    }
-    catch(error){
-        res.render('profile',{error:'An error occured while following the user'});
+    } catch (error) {
+        console.error(error);
+        res.status(500).render('profile', { error: 'An error occurred while following the user', currentUser: req.user });
     }
 }
 
-async function handlePostUnfollowRequest(req,res){
+async function handlePostUnfollowRequest(req, res) {
     try {
-        const userToUnfollow = await User.findOne({username:req.params.username});
-        const currentUser = await User.findOne({username:req.user.username});
+        const userToUnfollow = await User.findOne({ username: req.params.username });
+        if (!userToUnfollow) {
+            return res.status(404).render('error', { status: 404, message: 'User not found', currentUser: req.user });
+        }
+
+        const currentUser = await User.findOne({ username: req.user.username });
+        if (!currentUser) {
+            return res.status(404).render('error', { status: 404, message: 'Current user not found', currentUser: req.user });
+        }
 
         if (userToUnfollow.followers.includes(req.user._id)) {
             userToUnfollow.followers = userToUnfollow.followers.filter(followerId => !followerId.equals(currentUser._id));
@@ -191,11 +221,11 @@ async function handlePostUnfollowRequest(req,res){
         res.redirect(`/user/${userToUnfollow.username}`);
     } catch (error) {
         console.error(error);
-        res.redirect('/');
+        res.status(500).redirect('/');
     }
 }
 
-module.exports={
+module.exports = {
     handleGetUserSignin,
     handlePostUserSignin,
     handleGetUserSignup,
@@ -206,4 +236,4 @@ module.exports={
     handleGetUserProfile,
     handlePostFollowRequest,
     handlePostUnfollowRequest,
-}
+};

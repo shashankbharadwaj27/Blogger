@@ -8,7 +8,7 @@
 </head>
 <body data-bs-theme="dark">
     <%- include('./partials/nav') %>
-    <div class="container mt-4">
+    <div class="container mt-4" style="min-height: 80vh;">
         <h1 class="mt-"><%= blog.title %></h1>
         <img class="blog-image mt-2" src="<%= blog.coverImage %>">
         <p class="mt-2"><%= blog.body %></p>
@@ -50,11 +50,12 @@
             <% comments.forEach(comment => { %>
                 <div class="mt-2">
                     <a href="/user/<%= comment.createdBy.username %>"><img src="<%= comment.createdBy.profileImage %>" class="small-profiles" width="50px"><%=comment.createdBy.firstName %></a>
-                    <div class="comment-content"><pre style="margin-left: 50px;"><%= comment.content %></pre></div>
+                    <div class="comment-content"><pre style="text-wrap:wrap; margin-left: 50px;"><%= comment.content %></pre></div>
                 </div>
             <% }) %>
         </div>
     </div>
+     <%- include('./partials/footer') %>
     <%- include('./partials/scripts') %>
     <script src="/scripts/script.js"></script>
 </body>

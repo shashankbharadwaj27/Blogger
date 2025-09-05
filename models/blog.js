@@ -16,13 +16,10 @@ const blogSchema=new Schema({
         type:String,
         required:false,
     },
-    likes: {
-        type: [{
-            type: Schema.Types.ObjectId,
-            ref: "User"
-        }],
-        unique: true
-    },
+    likes: [{
+        type: Schema.Types.ObjectId,
+        ref: "User"
+    }],
     createdBy:{
         type:Schema.Types.ObjectId,
         ref:'user',

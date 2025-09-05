@@ -6,7 +6,7 @@
 </head> 
 <body data-bs-theme="dark">
     <%- include('./partials/nav') %>
-    <div class="container mt-3">
+    <div class="container mt-3" style="min-height: 80vh;">
         <form action="/blog/" method="post" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
@@ -29,6 +29,7 @@
             </div>
         </form>
     </div>
+    <%- include('./partials/footer') %>
     <%- include('./partials/scripts') %>
 </body>
 </html>
