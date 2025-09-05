@@ -1,58 +1,78 @@
 require('dotenv').config();
 
-const express=require('express');
-const path=require('path');
-const userRoute=require('./routes/user');
-const blogRoute=require('./routes/blog')
-const searchRoute=require('./routes/search');
-const mongoose=require('mongoose');
-const cookieParser=require('cookie-parser');
-const {checkForCookieValue,restrictToLoggedinUserOnly}=require('./middlewares/authentication');
-const User=require('./models/user');
-const Blog=require('./models/blog');
-const populateUser=require('./middlewares/populateUser');
+const express = require('express');
+const path = require('path');
+const userRoute = require('./routes/user');
+const blogRoute = require('./routes/blog');
+const searchRoute = require('./routes/search');
+const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
+const { checkForCookieValue } = require('./middlewares/authentication');
+const User = require('./models/user');
+const Blog = require('./models/blog');
+const populateUser = require('./middlewares/populateUser');
 
-const app=express();
-const PORT=process.env.PORT || 8000;
+const app = express();
+const PORT = process.env.PORT || 8000;
 
 mongoose.connect(process.env.MONGO_URL)
-.then(console.log('MongoDB Connected')).catch(err=>console.log(err))
+  .then(() => console.log('MongoDB Connected'))
+  .catch(err => console.log(err));
 
-app.set('view engine','ejs');
-app.set('views',path.resolve('./views')); 
-app.use(express.urlencoded({extended:false})); 
-app.use(express.static(path.resolve('./public')))
+app.set('view engine', 'ejs');
+app.set('views', path.resolve('./views'));
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static(path.resolve('./public')));
 app.use(cookieParser());
 app.use(checkForCookieValue('token'));
 app.use(populateUser);
 
-app.use('/user',userRoute)
-app.use('/blog',blogRoute)
-app.use('/search',searchRoute)
-app.get('/',async(req,res)=>{
-    if(!req.user){
-        return res.render('home')
-    }
-    try {
-        let blogs;
-        const user = await User.findById(req.user._id).populate('following');
+app.use('/user', userRoute);
+app.use('/blog', blogRoute);
+app.use('/search', searchRoute);
 
-        if(user.following.length===0){
-            return res.render('home',{currentUser:req.user})
-        }
+app.get('/', async (req, res) => {
+  if (!req.user) {
+    return res.render('home');
+  }
+  try {
+    let blogs;
+    const user = await User.findById(req.user._id).populate('following');
 
-        if (user.following.length > 0) {
-            blogs = await Blog.find({ createdBy: { $in: user.following } });
-        }
-        res.render('home',{
-            currentUser:req.user,
-            blogs:blogs
-        })
+    if (user.following.length === 0) {
+      return res.render('home', { currentUser: req.user });
     }
-    catch(error){
-        console.error(error);
-        res.render('home',{error:'Error loading the blogs'});
-    }
-})
 
-app.listen(PORT,()=>console.log(`server started at: http://localhost:${PORT}`));
+    if (user.following.length > 0) {
+      blogs = await Blog.find({ createdBy: { $in: user.following } });
+    }
+    res.render('home', {
+      currentUser: req.user,
+      blogs: blogs
+    });
+  } catch (error) {
+    console.error(error);
+    res.render('home', { error: 'Error loading the blogs' });
+  }
+});
+
+// 404 handler (for all non-existing routes)
+app.use((req, res) => {
+  res.status(404).render('error', {
+    status: 404,
+    message: 'Page not found',
+    currentUser: req.user || null
+  });
+});
+
+// Global error handler (server errors, thrown errors, etc.)
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.status || 500).render('error', {
+    status: err.status || 500,
+    message: err.message || 'Internal Server Error',
+    currentUser: req.user || null
+  });
+});
+
+app.listen(PORT, () => console.log(`server started at: http://localhost:${PORT}`));
