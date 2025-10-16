@@ -16,6 +16,10 @@ const blogSchema=new Schema({
         type:String,
         required:false,
     },
+    coverImageId:{
+        type:String,
+        required:false,
+    },
     likes: [{
         type: Schema.Types.ObjectId,
         ref: "User"

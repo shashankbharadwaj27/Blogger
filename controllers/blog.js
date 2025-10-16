@@ -1,6 +1,8 @@
 const Blog = require('../models/blog');
 const Comments = require('../models/comments');
 const mongoose = require('mongoose');
+const cloudinary = require('../config/cloudinary');
+const sharp = require('sharp');
 
 function isValidObjectId(id) {
   return mongoose.Types.ObjectId.isValid(id);
@@ -26,8 +28,27 @@ async function handlePostNewBlog(req, res) {
         }
 
         let coverImageUrl = '';
+        let coverImageId = '';
         if (req.file) {
-            coverImageUrl = `/uploads/${req.file.filename}`;
+            // Compress image
+            const buffer = await sharp(req.file.buffer)
+                .resize({ width: 1200 })
+                .jpeg({ quality: 80 })
+                .toBuffer();
+
+            const uploadResult = await new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    { folder: 'blogs' },
+                    (error, result) => {
+                        if (error) return reject(error);
+                        resolve(result);
+                    }
+                );
+                stream.end(buffer);
+            });
+
+            coverImageUrl = uploadResult.secure_url;
+            coverImageId = uploadResult.public_id;
         }
 
         const blog = await Blog.create({
@@ -35,6 +56,7 @@ async function handlePostNewBlog(req, res) {
             preview,
             body,
             coverImage: coverImageUrl,
+            coverImageId: coverImageId,
             createdBy: req.user._id
         });
 
@@ -158,8 +180,14 @@ async function handleDeleteBlog(req, res) {
             });
         }
 
+        // Delete cover image from Cloudinary
+        if (blog.coverImageId) {
+            await cloudinary.uploader.destroy(blog.coverImageId);
+        }
+
         await Blog.deleteOne({ _id: blogId });
         res.redirect(`/user/${req.user.username}`);
+        
     } catch (err) {
         console.error(err);
         res.status(500).render('error', {
