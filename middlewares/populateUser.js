@@ -3,7 +3,7 @@ require('dotenv').config();
 const User=require('../models/user')
 const jwt=require('jsonwebtoken');
 
-const secret=process.env.SESSION_SECRET;
+const secret=process.env.SESSION_SECRET; 
 
 const populateUser= async(req,res,next)=>{
     const token=req.cookies.token;

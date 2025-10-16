@@ -18,7 +18,7 @@ function handleGetUserSignin(req, res) {
     } catch (error) {
         console.error(error);
         res.status(500).send('Error loading this page');
-    }
+    } 
 }
 
 async function handlePostUserSignin(req, res) {
