@@ -14,7 +14,7 @@
         <p class="mt-2"><%= blog.body %></p>
     </div>
     <div class="container mt-2">
-        <a href="/user/<%= blog.createdBy.username %>"><img src="<%= blog.createdBy.profileImage %>" class="small-profiles" width="50px"><%= blog.createdBy.firstName %></a>
+        <a href="/user/<%= blog.createdBy.username %>"><img src="<%= blog.createdBy.profileImageUrl %>" class="small-profiles" width="50px"><%= blog.createdBy.firstName %></a>
     </div>
     <div class="container mt-3">
         <div class="like-section">
@@ -49,7 +49,7 @@
         <div class="comments mt-4">
             <% comments.forEach(comment => { %>
                 <div class="mt-2">
-                    <a href="/user/<%= comment.createdBy.username %>"><img src="<%= comment.createdBy.profileImage %>" class="small-profiles" width="50px"><%=comment.createdBy.firstName %></a>
+                    <a href="/user/<%= comment.createdBy.username %>"><img src="<%= comment.createdBy.profileImageUrl %>" class="small-profiles" width="50px"><%=comment.createdBy.firstName %></a>
                     <div class="comment-content"><pre style="text-wrap:wrap; margin-left: 50px;"><%= comment.content %></pre></div>
                 </div>
             <% }) %>

@@ -8,6 +8,8 @@ const multer = require('multer');
 const { createUserToken } = require('../services/authentication');
 const { restrictToLoggedinUserOnly } = require('../middlewares/authentication');
 const Blog = require('../models/blog');
+const cloudinary = require('../config/cloudinary');
+const sharp = require('sharp');
 
 const router = Router();
 
@@ -108,11 +110,31 @@ async function handlePostUserSettings(req, res) {
         }
 
         if (req.file) {
-            currentUser.profileImage = `/uploads/${req.file.filename}`;
+            const buffer = await sharp(req.file.buffer)
+                    .resize({ width: 1200 })
+                    .jpeg({ quality: 80 })
+                    .toBuffer();
+            
+            const uploadResult = await new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    { folder: 'profile-photos' },
+                    (error, result) => {
+                        if (error) return reject(error);
+                        resolve(result);
+                    }
+                );
+                stream.end(buffer);
+            });
+
+            currentUser.profileImageUrl = uploadResult.secure_url;
+            currentUser.profileImageId = uploadResult.public_id
         }
-        if (deleteProfileImage) {
-            currentUser.profileImage = '/images/avatar.png';
+        if (deleteProfileImage && currentUser.profileImageId) {
+            await cloudinary.uploader.destroy(currentUser.profileImageId);
+            currentUser.profileImageId = null;
+            currentUser.profileImageUrl = '/images/avatar.png';
         }
+
         if (username && username !== currentUser.username) {
             currentUser.username = username;
         }

@@ -27,9 +27,13 @@ const userSchema=new Schema({
         type:String,
         required:true,
     },
-    profileImage:{
+    profileImageUrl:{
         type:String,
         default:'/images/avatar.png'
+    },
+    profileImageId:{
+        type:String,
+        default:null
     },
     country:{
         type:String,

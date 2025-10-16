@@ -11,7 +11,7 @@
         <div class="row">
             <div class="col-md-3 border-right">
                 <div class="d-flex flex-column align-items-center text-center p-3 py-5">
-                    <img class=" mt-5" width="200px" src="<%= currentUser.profileImage %>">
+                    <img class=" mt-5" width="200px" src="<%= currentUser.profileImageUrl %>">
                     <span class="font-weight-bold mt-2 text-white"><%= currentUser.firstName %></span>
                     <span class="text-white"><%= currentUser.email %></span>
                     <span> </span>
@@ -27,7 +27,7 @@
                             <div class="col-md-12">
                                 <label class="labels">Profile Photo</label>
                                 <input type="file" name="profileImage" id="profilePhoto" class="form-control">
-                                 <% if (currentUser.profileImage !== '/images/avatar.png') { %>
+                                 <% if (currentUser.profileImageUrl !== '/images/avatar.png') { %>
                                     <div class="mt-2">
                                         <div class="form-check mt-2">
                                             <input class="form-check-input" type="checkbox" name="deleteProfileImage" id="deleteProfileImage">
