@@ -52,7 +52,7 @@ function handleGetUserSignup(req, res) {
 async function handlePostUserSignup(req, res) {
     try {
         const { firstName, email, password, username } = req.body;
-        key = process.env.apiKey;
+        key = process.env.EMAIL_VALIDATION_KEY;
         const url = `https://api.emailvalidation.io/v1/info?apikey=${key}&email=${email}`;
         let response = await fetch(url);
         let result = await response.json();
