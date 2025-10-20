@@ -16,7 +16,7 @@ function createUserToken(user){
         state:user.state,
         description:user.description,
         role:user.role,
-        profileImage:user.profileImage
+        profileImageUrl:user.profileImageUrl
     }
     const token=JWT.sign(payload,secret);
     return token;

@@ -3,6 +3,15 @@ const Comments = require('../models/comments');
 const mongoose = require('mongoose');
 const cloudinary = require('../config/cloudinary');
 const sharp = require('sharp');
+const sanitizeHtml = require('sanitize-html');
+
+const sanitizeOptions = {
+    allowedTags: ['p', 'ul', 'ol', 'li', 'strong', 'em', 'br', 'a', 'h1', 'h2', 'h3'],
+    allowedAttributes: {
+        'a': ['href', 'target'], // only allow href and target for links
+    },
+    allowedSchemes: ['http', 'https'], // only safe URL schemes
+};
 
 function isValidObjectId(id) {
   return mongoose.Types.ObjectId.isValid(id);
@@ -20,12 +29,15 @@ function handleGetAddBlog(req, res) {
 async function handlePostNewBlog(req, res) {
     try {
         const { title, preview, body } = req.body;
+        
         if (!title || !body) {
             return res.status(400).render('addBlog', {
                 currentUser: req.user,
                 message: 'Title and body are required'
             });
         }
+
+        const safeBody = sanitizeHtml(body, sanitizeOptions);
 
         let coverImageUrl = '';
         let coverImageId = '';
@@ -54,7 +66,7 @@ async function handlePostNewBlog(req, res) {
         const blog = await Blog.create({
             title,
             preview,
-            body,
+            body : safeBody,
             coverImage: coverImageUrl,
             coverImageId: coverImageId,
             createdBy: req.user._id

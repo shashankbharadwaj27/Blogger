@@ -5,6 +5,7 @@ const path = require('path');
 const userRoute = require('./routes/user');
 const blogRoute = require('./routes/blog');
 const searchRoute = require('./routes/search');
+const aiRoute = require('./routes/ai');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const { checkForCookieValue } = require('./middlewares/authentication');
@@ -21,6 +22,7 @@ mongoose.connect(process.env.MONGO_URL)
 
 app.set('view engine', 'ejs');
 app.set('views', path.resolve('./views'));
+app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.resolve('./public')));
 app.use(cookieParser());
@@ -30,6 +32,7 @@ app.use(populateUser);
 app.use('/user', userRoute);
 app.use('/blog', blogRoute);
 app.use('/search', searchRoute);
+app.use('/ai', aiRoute);
 
 app.get('/', async (req, res) => {
   if (!req.user) {

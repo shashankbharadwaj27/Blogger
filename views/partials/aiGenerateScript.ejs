@@ -1,0 +1,78 @@
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+    const generateBtn = document.getElementById('generateAI');
+    const enhanceBtn = document.getElementById('enhanceAI');
+    const bodyField = document.getElementById('body');
+
+    let isProcessing = false; // Flag to prevent multiple requests
+
+    async function handleAI(endpoint, payload) {
+        if (isProcessing) return; // ignore clicks if already processing
+        isProcessing = true;
+
+        generateBtn.disabled = true;
+        enhanceBtn.disabled = true;
+
+        bodyField.innerHTML = endpoint === '/ai/generate' ? "Generating..." : "Enhancing...";
+
+        try {
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+
+            if (res.ok && data.body) {
+                bodyField.innerHTML = marked.parse(data.body);
+            } else {
+                bodyField.innerHTML = "";
+                alert('AI failed: ' + (data.message || 'Unknown error'));
+            }
+        } catch (err) {
+            console.error(err);
+            bodyField.innerHTML = "";
+            alert('Error with AI request');
+        } finally {
+            isProcessing = false;
+            generateBtn.disabled = false;
+            enhanceBtn.disabled = false;
+        }
+    }
+
+    // Generate with AI
+    generateBtn.addEventListener('click', () => {
+        const title = document.getElementById('title').value.trim();
+        const preview = document.getElementById('preview').value.trim();
+
+        if (!title || !preview) {
+            alert('Title and preview are required!');
+            return;
+        }
+
+        handleAI('/ai/generate', { title, preview });
+    });
+
+    // Enhance with AI
+    enhanceBtn.addEventListener('click', () => {
+        const currentBody = bodyField.innerText.trim();
+        if (!currentBody) {
+            alert('Body content is required to enhance!');
+            return;
+        }
+
+        handleAI('/ai/enhance', { body: currentBody });
+    });
+
+</script>
+
+<script>
+  const blogForm = document.getElementById('blogForm');
+  const bodyDiv = document.getElementById('body');
+  const bodyInput = document.getElementById('bodyInput');
+
+  blogForm.addEventListener('submit', () => {
+      bodyInput.value = bodyDiv.innerHTML;
+  });
+</script>

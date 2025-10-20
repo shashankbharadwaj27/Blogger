@@ -11,7 +11,7 @@
     <div class="container mt-4" style="min-height: 80vh;">
         <h1 class="mt-"><%= blog.title %></h1>
         <img class="blog-image mt-2" src="<%= blog.coverImage %>">
-        <p class="mt-2"><%= blog.body %></p>
+        <p class="mt-2"><%- blog.body %></p>
     </div>
     <div class="container mt-2">
         <a href="/user/<%= blog.createdBy.username %>"><img src="<%= blog.createdBy.profileImageUrl %>" class="small-profiles" width="50px"><%= blog.createdBy.firstName %></a>
